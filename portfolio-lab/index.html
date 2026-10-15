@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portfolio Lab</title>
+<meta name="description" content="Make a one-file portfolio website: profile, photo, projects, skills, live GitHub repos and contact. Every remix is a new design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/maker.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 18 9 11l4 4 7-10"/><circle cx="20" cy="5" r="1.6" fill="#fff"/></svg></span>
+      <div><b>Portfolio Lab</b><small>one file · free hosting · every remix unique</small></div>
+    </div>
+    <div class="profiles">
+      <label class="sr" for="profileSelect">Profile</label>
+      <select id="profileSelect"></select>
+      <button class="btn btn--sm" id="newProfile" title="Start a new person's portfolio">+ New</button>
+    </div>
+    <button class="btn btn--hot" id="remixTop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h4l10 10h4M3 17h4l3-3M14 10l3-3h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg>Remix design</button>
+    <button class="btn btn--primary hide-sm" id="copyTop">Copy website code</button>
+  </header>
+
+  <div class="switch"><div class="seg" role="group" aria-label="View"><button id="viewEdit" aria-pressed="true">Edit</button><button id="viewPreview" aria-pressed="false">Preview</button></div></div>
+
+  <main class="work" id="work" data-view="edit">
+    <section class="editor" aria-label="Editor">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="me" aria-selected="true">About me</button>
+        <button class="tab" role="tab" data-tab="projects" aria-selected="false">Projects<span class="n" id="projCount"></span></button>
+        <button class="tab" role="tab" data-tab="skills" aria-selected="false">Skills</button>
+        <button class="tab" role="tab" data-tab="links" aria-selected="false">Links & contact</button>
+        <button class="tab" role="tab" data-tab="design" aria-selected="false">Design</button>
+        <button class="tab" role="tab" data-tab="publish" aria-selected="false">Publish</button>
+      </div>
+      <div class="panels">
+
+        <div class="panel" data-panel="me">
+          <div class="notice" id="exampleNotice" hidden>
+            <span>✦</span>
+            <div><b>This is example content.</b>Replace it with your own, or start from an empty form.
+              <div><button class="btn btn--sm" id="clearExample">Start blank</button></div></div>
+          </div>
+          <div class="drop" id="photoDrop">
+            <div class="photo">
+              <div class="photo__img" id="photoPreview" aria-hidden="true"></div>
+              <div class="field">
+                <span>Profile photo</span>
+                <div class="photo__actions">
+                  <label class="btn btn--sm" for="photoInput">Upload photo</label>
+                  <button class="btn btn--sm btn--ghost btn--danger" id="photoRemove">Remove</button>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" class="sr">
+                <span class="hint">JPG or PNG. Square works best. Drop a file here too. It's resized and saved inside the website file.</span>
+              </div>
+            </div>
+          </div>
+          <label class="field"><span>Full name</span><input type="text" id="f-name" data-bind="name" autocomplete="name"></label>
+          <div class="row">
+            <label class="field"><span>Role / title</span><input type="text" id="f-role" data-bind="role" placeholder="Data Scientist"></label>
+            <label class="field"><span>Location</span><input type="text" id="f-location" data-bind="location" placeholder="Lagos, Nigeria"></label>
+          </div>
+          <label class="field"><span>Tagline</span><input type="text" id="f-tagline" data-bind="tagline" placeholder="I build with data."><span class="hint">The big line people read first. Keep it short.</span></label>
+          <label class="field"><span>Brief about me</span><textarea id="f-bio" data-bind="bio" rows="5" placeholder="Two or three sentences: what you do, what you're into, what you're looking for."></textarea></label>
+          <div class="row">
+            <label class="field"><span>Focus</span><input type="text" id="f-focus" data-bind="focus" placeholder="Data science · Python"></label>
+            <label class="field"><span>Currently learning</span><input type="text" id="f-learning" data-bind="learning" placeholder="Machine learning"></label>
+          </div>
+          <label class="field"><span>Availability badge</span><input type="text" id="f-status" data-bind="status" placeholder="Open to internships"><span class="hint">Shows with a live dot. Leave empty to hide it.</span></label>
+          <label class="field"><span>Quick stats</span><textarea id="f-stats" data-bind="stats" rows="3" placeholder="Projects shipped: 6&#10;Datasets cleaned: 40+&#10;Cups of zobo: ∞"></textarea><span class="hint">One per line as <code>label: value</code>. Numbers count up on the site. Up to 4.</span></label>
+        </div>
+
+        <div class="panel" data-panel="projects" hidden>
+          <p class="hint">Add your best 3–5 projects. Each one gets a card and a case-study pop-up. On team projects, say what <b>you</b> did; recruiters ask about it.</p>
+          <div id="projectList" style="display:grid;gap:10px"></div>
+          <button class="btn" id="addProject">+ Add a project</button>
+        </div>
+
+        <div class="panel" data-panel="skills" hidden>
+          <label class="field"><span>Skills and levels</span><textarea id="f-skills" data-bind="skills" rows="10" placeholder="Python 5&#10;pandas 4&#10;SQL 3"></textarea>
+            <span class="hint">One skill per line, followed by a level from 1 to 5. The site draws them as an animated bar chart, strongest first. A skill without a number is shown as a tag.</span></label>
+        </div>
+
+        <div class="panel" data-panel="links" hidden>
+          <label class="field"><span>GitHub username</span><input type="text" id="f-github" data-bind="github" placeholder="e.g. ada-okafor" autocomplete="off">
+            <span class="hint">Just the username, not the full link. Your published site will load your public repos and a language chart live from GitHub. (The preview here can't reach GitHub, so it shows a placeholder.)</span></label>
+          <label class="field"><span>Email</span><input type="email" id="f-email" data-bind="email" placeholder="you@example.com"></label>
+          <label class="field"><span>LinkedIn link</span><input type="url" id="f-linkedin" data-bind="linkedin" placeholder="https://www.linkedin.com/in/…"></label>
+          <div class="row">
+            <label class="field"><span>X / Twitter link</span><input type="url" id="f-x" data-bind="x" placeholder="https://x.com/…"></label>
+            <label class="field"><span>Other website</span><input type="url" id="f-website" data-bind="website" placeholder="https://…"></label>
+          </div>
+          <label class="field"><span>CV / résumé link</span><input type="url" id="f-cv" data-bind="cv" placeholder="Google Drive or Dropbox share link"><span class="hint">Upload your CV as a PDF to Google Drive, set sharing to "Anyone with the link", and paste the link here.</span></label>
+          <label class="field" style="grid-template-columns:auto 1fr;align-items:start;gap:10px"><input type="checkbox" id="f-form" data-bind="contactForm" style="margin-top:3px">
+            <span><span class="label">Add a contact form</span><br><span class="hint">Messages go to your email through FormSubmit (free, no account). The first message sends you a confirmation email; click the link in it once and later messages arrive normally.</span></span></label>
+        </div>
+
+        <div class="panel" data-panel="design" hidden>
+          <div class="remix">
+            <div class="remix__top">
+              <div><div class="label">This design</div><div class="remix__seed" id="seedLabel"></div></div>
+              <button class="btn btn--hot" id="remix">Remix</button>
+            </div>
+            <div class="hint" style="color:inherit">Each remix picks a new palette, font pairing, hero, background animation and card style. Lock any part you like below and keep remixing the rest.</div>
+          </div>
+          <div class="dna" id="dna"></div>
+        </div>
+
+        <div class="panel" data-panel="publish" hidden>
+          <div class="section-title">Put it online for free <i>github pages</i></div>
+          <p class="hint">Your whole site is one file called <code>index.html</code>. GitHub hosts it for free at <code>username.github.io</code>, so it stays online without anyone's computer running.</p>
+          <ol class="steps">
+            <li><div><b>Copy your website code.</b><div class="publish-actions" style="margin-top:8px"><button class="btn btn--primary" id="copyHtml">Copy website code</button><button class="btn" id="downloadHtml">Download index.html</button></div><div class="size" id="sizeLabel" style="margin-top:6px"></div><div class="hint">Copy is the quickest: you paste it straight into GitHub. Download saves the same code as a file called <code>index.html</code>, which you can upload instead.</div></div></li>
+            <li><div>On GitHub, create a <b>public</b> repository named exactly <code id="repoName">your-username.github.io</code>.</div></li>
+            <li><div>In the new repo, click <b>Add file → Create new file</b>. Name it <code>index.html</code>, paste the code, then click <b>Commit changes</b>. (Downloaded the file instead? Use <b>Add file → Upload files</b>.)</div></li>
+            <li><div>Wait about a minute and open <code id="siteUrl">https://your-username.github.io</code>. If it doesn't appear, go to <b>Settings → Pages</b>, choose <b>Deploy from a branch → main / root</b> and save.</div></li>
+            <li><div>To update later: change things here, copy again, open <code>index.html</code> on GitHub, click the pencil, replace everything and commit.</div></li>
+          </ol>
+          <div class="fallback" id="fallback" hidden>
+            <span class="label">Copy didn't work in this window. Select all of this and copy it:</span>
+            <textarea id="fallbackText" readonly></textarea>
+          </div>
+          <div class="section-title">Save or move this profile <i>backup</i></div>
+          <p class="hint">Profiles are saved in this browser only. To move one to another computer, or to send a student their profile, copy the backup and paste it into "Load a backup" there.</p>
+          <div class="publish-actions"><button class="btn" id="copyBackup">Copy profile backup</button><button class="btn" id="showImport">Load a backup</button><button class="btn btn--danger" id="deleteProfile">Delete this profile</button></div>
+          <div class="fallback" id="importBox" hidden>
+            <label class="label" for="importText">Paste a profile backup</label>
+            <textarea id="importText" placeholder='{"name": …}'></textarea>
+            <div class="publish-actions"><button class="btn btn--primary" id="doImport">Load as new profile</button><button class="btn btn--ghost" id="cancelImport">Cancel</button></div>
+          </div>
+          <div class="fallback" id="confirmDelete" hidden>
+            <span class="label">Delete this profile from this browser? This can't be undone.</span>
+            <div class="publish-actions"><button class="btn btn--danger" id="yesDelete">Delete</button><button class="btn btn--ghost" id="noDelete">Keep it</button></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="stage" aria-label="Live preview">
+      <div class="stage__bar">
+        <div class="chips" id="chips"></div>
+        <div class="seg" role="group" aria-label="Preview size"><button id="devDesk" aria-pressed="true">Desktop</button><button id="devPhone" aria-pressed="false">Phone</button></div>
+      </div>
+      <div class="frame-wrap"><div class="device" id="device"><iframe id="preview" title="Portfolio preview"></iframe><div class="device__flash" id="flash"></div></div></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/designs.js"></script>
+<script src="js/example.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/site-runtime.js"></script>
+<script src="js/site-builder.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
